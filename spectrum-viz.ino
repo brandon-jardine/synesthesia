@@ -14,11 +14,12 @@
 #define COLOR_START 54613
 #define SAMPLE_DELAY 50
 
-int frequenciesLeft[7];
-int frequenciesRight[7];
-
 const int bandwidth = LED_COUNT / 15;
 const int ch_offset = (bandwidth / 2) + (LED_COUNT / 2);
+
+int frequenciesLeft[7];
+int frequenciesRight[7];
+int colorStart = COLOR_START;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -51,9 +52,16 @@ void setup() {
 }
 
 void loop() {
+    int count = 0;
+
     frequencyRead();
     frequencyGraph();
     delay(SAMPLE_DELAY);
+
+    if (++count > 1200) {
+        count = 0;
+        colorStart = random(65535);
+    }
 }
 
 void frequencyRead() {
