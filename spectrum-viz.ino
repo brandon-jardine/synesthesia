@@ -1,17 +1,23 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
-#define DEBUG
+// uncomment to bring debug output to serial
+// #define DEBUG true
 
+// neopixel data line & led count
 #define LED_PIN 6
 #define LED_COUNT 60
 
+// spectrum shield pin definitions
 #define STROBE 4
 #define RESET 5
 #define DATA_LEFT A0
 #define DATA_RIGHT A1
 
+// initial base color
 #define COLOR_START 54613
+
+// sample once every x milliseconds
 #define SAMPLE_DELAY 50
 
 const int bandwidth = LED_COUNT / 15;
@@ -59,6 +65,10 @@ void loop() {
     delay(SAMPLE_DELAY);
 
     if (++count > 1200) {
+        #ifdef DEBUG
+            Serial.write("Randomizing base color value.");
+        #endif
+
         count = 0;
         colorStart = random(65535);
     }
@@ -66,21 +76,36 @@ void loop() {
 
 void frequencyRead() {
     for (int i = 0; i < 7; ++i) {
-        frequenciesLeft[i] = (analogRead(DATA_LEFT) + analogRead(DATA_RIGHT)) >> 1;
-        frequenciesRight[i] = (analogRead(DATA_LEFT) + analogRead(DATA_RIGHT)) >> 1;
+        frequenciesLeft[i] = (analogRead(DATA_LEFT) + analogRead(DATA_LEFT)) >> 1;
+        frequenciesRight[i] = (analogRead(DATA_RIGHT) + analogRead(DATA_RIGHT)) >> 1;
         digitalWrite(STROBE, HIGH);
         digitalWrite(STROBE, LOW);
         delayMicroseconds(40);
     }
+
+    #ifdef DEBUG
+        Serial.print("left: ");
+        for (int i = 0; i < 7; ++i) {
+            Serial.print(frequenciesLeft[i]);
+            Serial.print(" ");
+        }
+        Serial.print("\n");
+        Serial.print("right: ");
+        for (int i = 0; i < 7; ++i) {
+            Serial.print(frequenciesRight[i]);
+            Serial.print(" ");
+        }
+        Serial.print("\n");
+    #endif
 }
 
 void frequencyGraph() {
     strip.clear();
 
     for (int i = 0; i < 7; ++i) {
-        int avg = frequenciesLeft[6 - 1];
-        avg *= 64;
-        uint32_t color = strip.gamma32(strip.ColorHSV(0 - avg));
+        int amplitude = frequenciesLeft[6 - i];
+        amplitude *= 64;
+        uint32_t color = strip.gamma32(strip.ColorHSV(colorStart - amplitude));
 
         for (int n = 0; n < bandwidth; ++n) {
             strip.setPixelColor((i * bandwidth) + n, color);
@@ -88,9 +113,9 @@ void frequencyGraph() {
     }
 
     for (int i = 0; i < 7; ++i) {
-        int avg = frequenciesRight[i];
-        avg *= 64;
-        uint32_t color = strip.gamma32(strip.ColorHSV(0 - avg));
+        int amplitude = frequenciesRight[i];
+        amplitude *= 64;
+        uint32_t color = strip.gamma32(strip.ColorHSV(colorStart - amplitude));
 
         for (int n = 0; n < bandwidth; ++n) {
             strip.setPixelColor((i * bandwidth) + n + ch_offset, color);
