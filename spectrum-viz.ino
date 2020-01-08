@@ -25,6 +25,7 @@ const int ch_offset = (bandwidth / 2) + (LED_COUNT / 2);
 
 int frequenciesLeft[7];
 int frequenciesRight[7];
+int count = 0;
 int colorStart = COLOR_START;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -58,8 +59,6 @@ void setup() {
 }
 
 void loop() {
-    int count = 0;
-
     frequencyRead();
     frequencyGraph();
     delay(SAMPLE_DELAY);
@@ -103,22 +102,16 @@ void frequencyGraph() {
     strip.clear();
 
     for (int i = 0; i < 7; ++i) {
-        int amplitude = frequenciesLeft[6 - i];
-        amplitude *= 64;
-        uint32_t color = strip.gamma32(strip.ColorHSV(colorStart - amplitude));
+        int lAmplitude = frequenciesLeft[6 - i];
+        int rAmplitude = frequenciesRight[i];
+        lAmplitude *= 64;
+        rAmplitude *= 64;
+        uint32_t lColor = strip.gamma32(strip.ColorHSV(colorStart - lAmplitude));
+        uint32_t rColor = strip.gamma32(strip.ColorHSV(colorStart - rAmplitude));
 
         for (int n = 0; n < bandwidth; ++n) {
-            strip.setPixelColor((i * bandwidth) + n, color);
-        }
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        int amplitude = frequenciesRight[i];
-        amplitude *= 64;
-        uint32_t color = strip.gamma32(strip.ColorHSV(colorStart - amplitude));
-
-        for (int n = 0; n < bandwidth; ++n) {
-            strip.setPixelColor((i * bandwidth) + n + ch_offset, color);
+            strip.setPixelColor((i * bandwidth) + n, lColor);
+            strip.setPixelColor((i * bandwidth) + n + ch_offset, rColor);
         }
     }
 
