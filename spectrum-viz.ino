@@ -14,6 +14,8 @@
 #define DATA_LEFT A0
 #define DATA_RIGHT A1
 
+#define COLOR A2
+
 // initial base color
 #define COLOR_START 54613
 
@@ -43,6 +45,7 @@ void setup() {
     pinMode(RESET, OUTPUT);
     pinMode(DATA_LEFT, INPUT);
     pinMode(DATA_RIGHT, INPUT);
+    pinMode(COLOR, INPUT);
 
     digitalWrite(STROBE, HIGH);
     digitalWrite(RESET, HIGH);
@@ -60,17 +63,18 @@ void setup() {
 
 void loop() {
     frequencyRead();
+    colorStart = analogRead(COLOR) * 64;
     frequencyGraph();
     delay(SAMPLE_DELAY);
 
-    if (++count > 1200) {
-        #ifdef DEBUG
-            Serial.write("Randomizing base color value.");
-        #endif
+    // if (++count > 1200) {
+    //     #ifdef DEBUG
+    //         Serial.write("Randomizing base color value.");
+    //     #endif
 
-        count = 0;
-        colorStart = random(65535);
-    }
+    //     count = 0;
+    //     colorStart = random(65535);
+    // }
 }
 
 void frequencyRead() {
