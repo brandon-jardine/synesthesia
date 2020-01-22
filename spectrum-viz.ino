@@ -38,7 +38,7 @@ void setup() {
     #endif
 
     strip.begin();
-    strip.setBrightness(50);
+    strip.setBrightness(200);
     strip.show();
 
     pinMode(STROBE, OUTPUT);
@@ -110,12 +110,28 @@ void frequencyGraph() {
         int rAmplitude = frequenciesRight[i];
         lAmplitude *= 64;
         rAmplitude *= 64;
-        uint32_t lColor = strip.gamma32(strip.ColorHSV(colorStart - lAmplitude));
-        uint32_t rColor = strip.gamma32(strip.ColorHSV(colorStart - rAmplitude));
+
+        uint16_t l_hue = colorStart - lAmplitude;
+        uint16_t r_hue = colorStart - rAmplitude;
+
+        uint32_t lColor = strip.gamma32(strip.ColorHSV(l_hue));
+        uint32_t rColor = strip.gamma32(strip.ColorHSV(r_hue));
 
         for (int n = 0; n < bandwidth; ++n) {
             strip.setPixelColor((i * bandwidth) + n, lColor);
             strip.setPixelColor((i * bandwidth) + n + ch_offset, rColor);
+        }
+
+        if (i == 6) {
+            for (int n = 0; n < (bandwidth / 2); ++n) {
+                strip.setPixelColor(6 * bandwidth + (bandwidth + n), lColor);
+            }
+        }
+
+        if (i == 0) {
+            for (int n = 1; n <= (bandwidth / 2); ++n) {
+                strip.setPixelColor(ch_offset - n, rColor);
+            }
         }
     }
 
