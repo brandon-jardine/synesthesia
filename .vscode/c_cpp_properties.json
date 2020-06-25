@@ -3,16 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceRoot}",
-                "/home/brandon/.arduino15/packages/arduino/hardware/avr/1.8.2/**",
                 "/home/brandon/.arduino15/packages/arduino/tools/**",
-                "/home/brandon/Downloads/arduino-1.8.10/hardware/tools/**",
-                "/home/brandon/Downloads/arduino-1.8.10/libraries/**",
-                "/home/brandon/Arduino/hardware/tools/**",
+                "/home/brandon/.arduino15/packages/arduino/hardware/avr/1.8.1/**",
+                "${workspaceRoot}",
+                "/usr/share/arduino/hardware/arduino/avr/**",
+                "/usr/share/arduino/tools/**",
+                "/usr/share/avr/avr/include/**",
                 "/home/brandon/Arduino/libraries/**"
-            ],
-            "forcedInclude": [
-                "/home/brandon/.arduino15/packages/arduino/hardware/avr/1.8.2/cores/arduino/Arduino.h"
             ],
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
@@ -20,6 +17,9 @@
             "cppStandard": "c++17",
             "defines": [
                 "USBCON"
+            ],
+            "forcedInclude": [
+                "/home/brandon/.arduino15/packages/arduino/hardware/avr/1.8.1/cores/arduino/Arduino.h"
             ]
         }
     ],
