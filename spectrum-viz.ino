@@ -15,6 +15,9 @@
 #define DATA_RIGHT A1
 
 #define COLOR A2
+#define VOLUME A3
+
+#define VOLUME_ENABLE true
 
 // initial base color
 #define COLOR_START 54613
@@ -27,6 +30,7 @@ const int ch_offset = (bandwidth / 2) + (LED_COUNT / 2);
 
 int frequenciesLeft[7];
 int frequenciesRight[7];
+int amplitude;
 int count = 0;
 int colorStart = COLOR_START;
 
@@ -38,7 +42,7 @@ void setup() {
     #endif
 
     strip.begin();
-    strip.setBrightness(200);
+    strip.setBrightness(128);
     strip.show();
 
     pinMode(STROBE, OUTPUT);
@@ -46,6 +50,7 @@ void setup() {
     pinMode(DATA_LEFT, INPUT);
     pinMode(DATA_RIGHT, INPUT);
     pinMode(COLOR, INPUT);
+    pinMode(VOLUME, INPUT);
 
     digitalWrite(STROBE, HIGH);
     digitalWrite(RESET, HIGH);
@@ -64,17 +69,15 @@ void setup() {
 void loop() {
     frequencyRead();
     colorStart = analogRead(COLOR) * 64;
+
+    #if VOLUME_ENABLE
+        amplitude = analogRead(VOLUME) >> 3;
+    #else
+        amplitude = 32;
+    #endif
+
     frequencyGraph();
     delay(SAMPLE_DELAY);
-
-    // if (++count > 1200) {
-    //     #ifdef DEBUG
-    //         Serial.write("Randomizing base color value.");
-    //     #endif
-
-    //     count = 0;
-    //     colorStart = random(65535);
-    // }
 }
 
 void frequencyRead() {
@@ -108,8 +111,8 @@ void frequencyGraph() {
     for (int i = 0; i < 7; ++i) {
         int lAmplitude = frequenciesLeft[6 - i];
         int rAmplitude = frequenciesRight[i];
-        lAmplitude *= 64;
-        rAmplitude *= 64;
+        lAmplitude *= amplitude;
+        rAmplitude *= amplitude;
 
         uint16_t l_hue = colorStart - lAmplitude;
         uint16_t r_hue = colorStart - rAmplitude;
