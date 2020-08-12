@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "Synesthesia.ino",
+    "sketch": "synesthesia.ino",
     "output": "output",
     "port": "/dev/ttyACM0",
     "programmer": "AVRISP mkII"

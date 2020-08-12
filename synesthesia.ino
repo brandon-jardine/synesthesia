@@ -23,6 +23,8 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
+#include "lib/SmoothPot.h"
+
 // uncomment to bring debug output to serial
 // #define DEBUG true
 
@@ -52,11 +54,15 @@ const int ch_offset = (bandwidth / 2) + (LED_COUNT / 2);
 
 int frequenciesLeft[7];
 int frequenciesRight[7];
-int amplitude;
-int count = 0;
+int amplitudeReading[6];
+int amplitude = 32;
 int colorStart = COLOR_START;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+SmoothPot colorPot(COLOR);
+#if VOLUME_ENABLE
+    SmoothPot volumePot(VOLUME);
+#endif
 
 void setup() {
     #ifdef DEBUG
@@ -71,11 +77,11 @@ void setup() {
     pinMode(RESET, OUTPUT);
     pinMode(DATA_LEFT, INPUT);
     pinMode(DATA_RIGHT, INPUT);
-    pinMode(COLOR, INPUT);
+    // pinMode(COLOR, INPUT);
 
-    #if VOLUME_ENABLE
-        pinMode(VOLUME, INPUT);
-    #endif
+    // #if VOLUME_ENABLE
+    //     pinMode(VOLUME, INPUT);
+    // #endif
 
     digitalWrite(STROBE, HIGH);
     digitalWrite(RESET, HIGH);
@@ -92,13 +98,14 @@ void setup() {
 }
 
 void loop() {
+    // TODO: add some kind of smoothing for the potentiometers
+
     frequencyRead();
-    colorStart = analogRead(COLOR) * 64;
+    // colorStart = analogRead(COLOR) * 64;
+    colorStart = colorPot.Read() * 64;
 
     #if VOLUME_ENABLE
         amplitude = analogRead(VOLUME) >> 3;
-    #else
-        amplitude = 32;
     #endif
 
     frequencyGraph();
