@@ -22,8 +22,7 @@
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
-
-#include <SmoothPot.h>
+#include <Syph_SmoothPot.h>
 
 // uncomment to bring debug output to serial
 // #define DEBUG true
