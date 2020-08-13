@@ -59,9 +59,9 @@ int amplitude = 32;
 int colorStart = COLOR_START;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-SmoothPot colorPot(COLOR);
+SmoothPot colorPot(COLOR, 6);
 #if VOLUME_ENABLE
-    SmoothPot volumePot(VOLUME);
+    SmoothPot volumePot(VOLUME, 6);
 #endif
 
 void setup() {
@@ -98,8 +98,6 @@ void setup() {
 }
 
 void loop() {
-    // TODO: add some kind of smoothing for the potentiometers
-
     frequencyRead();
     // colorStart = analogRead(COLOR) * 64;
     colorStart = colorPot.Read() * 64;

@@ -1,6 +1,8 @@
 #ifndef Queue_h
 #define Queue_h
 
+#include "Option.h"
+
 template <typename T>
 class Queue
 {
@@ -17,34 +19,40 @@ class Queue
             delete _arr;
         }
 
-        void push(T value) {
+        Option<T> push(T value) {
             if (isFull()) {
-                exit(2);
+                return Option<T>::Empty;
             }
 
             _rear = (_rear + 1) % _capacity;
             _arr[_rear] = value;
             _count++;
+
+            return Option<T>(value);
         }
 
-        T pull() {
+        Option<T> pull() {
             if (isEmpty()) {
-                exit(1);
+                return Option<T>::Empty;
             }
 
             T value = _arr[_front];
             _front = (_front + 1) % _capacity;
             _count--;
 
-            return value;
+            return Option<T>(value);
         }
 
-        T peak() {
+        Option<T> peak() {
             if (isEmpty()) {
-                exit(3);
+                return Option<T>::Empty;
             }
 
-            return _arr[_front];
+            return Option<T>(_arr[_front]);
+        }
+
+        int capacity() {
+            return _capacity;
         }
 
         int size() {
@@ -59,7 +67,7 @@ class Queue
             return (size() == _capacity);
         }
     protected:
-        T *_arr;
+        T* _arr;
     private:
         int _capacity;
         int _front;

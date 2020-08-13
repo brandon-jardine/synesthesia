@@ -9,14 +9,14 @@
 
 #include <Arduino.h>
 
+#include "Option.h"
 #include "Samples.h"
 
 class SmoothPot
 {
     public:
-        SmoothPot(int pin) {
+        SmoothPot(int pin, int numSamples) : _pin(pin), _samples(Samples(numSamples)) {
             pinMode(pin, INPUT);
-            _pin = pin;
 
             for (int i = 0; i < _samples.size(); ++i) {
                 _samples.push(digitalRead(_pin));
@@ -32,7 +32,7 @@ class SmoothPot
         }
     private:
         int _pin;
-        Samples _samples = Samples(6);
+        Samples _samples;
 };
 
 #endif
