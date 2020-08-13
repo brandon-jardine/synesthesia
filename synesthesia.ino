@@ -96,7 +96,7 @@ void loop() {
     colorStart = colorPot.Read() * 64;
 
     #if VOLUME_ENABLE
-        amplitude = analogRead(VOLUME) >> 3;
+        amplitude = volumePot.Read() >> 3;
     #endif
 
     frequencyGraph();
